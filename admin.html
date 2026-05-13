@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MangaPlus — لوحة الإدارة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --border: #1e1e2e;
+  --accent: #e63946;
+  --accent2: #ff6b35;
+  --gold: #ffd60a;
+  --text: #e8e8f0;
+  --muted: #6b6b80;
+  --success: #2ecc71;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(230,57,70,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(255,107,53,0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* LOGIN */
+#login-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  background: var(--bg);
+}
+
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 48px;
+  width: 380px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+
+.login-logo {
+  font-size: 32px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+  letter-spacing: -1px;
+}
+
+.login-sub {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 32px;
+}
+
+.login-card input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  margin-bottom: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+  text-align: left;
+  direction: ltr;
+}
+
+.login-card input:focus { border-color: var(--accent); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-danger { background: rgba(230,57,70,0.15); color: var(--accent); border: 1px solid rgba(230,57,70,0.3); }
+.btn-danger:hover { background: rgba(230,57,70,0.25); }
+.btn-success { background: rgba(46,204,113,0.15); color: var(--success); border: 1px solid rgba(46,204,113,0.3); }
+.btn-success:hover { background: rgba(46,204,113,0.25); }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+
+/* MAIN LAYOUT */
+#app { display: none; position: relative; z-index: 1; }
+
+.sidebar {
+  position: fixed;
+  top: 0; right: 0;
+  width: 260px;
+  height: 100vh;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  padding: 24px 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logo {
+  padding: 0 24px 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.sidebar-logo h1 {
+  font-size: 22px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sidebar-logo span {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  display: block;
+  margin-top: 2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 14px;
+  border-right: 3px solid transparent;
+}
+
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.nav-item.active { color: var(--accent); border-right-color: var(--accent); background: rgba(230,57,70,0.05); }
+.nav-icon { font-size: 18px; width: 22px; text-align: center; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  line-height: 1.6;
+}
+
+.main {
+  margin-right: 260px;
+  min-height: 100vh;
+  padding: 32px;
+}
+
+/* LANG TOGGLE */
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 24px;
+  margin-bottom: 8px;
+}
+
+.lang-btn {
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+}
+
+.lang-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* PAGES */
+.page { display: none; }
+.page.active { display: block; }
+
+.page-header {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.page-title span { color: var(--accent); }
+
+/* STATS */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.stat-num {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--accent);
+  font-family: 'Space Mono', monospace;
+}
+
+.stat-label { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+/* CARDS */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* FORMS */
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; display: block; }
+
+.form-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus { border-color: var(--accent); }
+.form-select { appearance: none; }
+
+/* MANGA LIST */
+.manga-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.manga-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.manga-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+.manga-cover {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}
+
+.manga-info { padding: 12px; }
+.manga-info h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.manga-info p { font-size: 12px; color: var(--muted); }
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge-ongoing { background: rgba(46,204,113,0.15); color: var(--success); }
+.badge-completed { background: rgba(230,57,70,0.15); color: var(--accent); }
+
+/* CHAPTERS */
+.chapter-list { display: flex; flex-direction: column; gap: 8px; }
+
+.chapter-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color 0.2s;
+}
+
+.chapter-item:hover { border-color: var(--accent); }
+
+/* UPLOAD */
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 48px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--accent);
+  background: rgba(230,57,70,0.03);
+}
+
+.drop-icon { font-size: 48px; margin-bottom: 12px; }
+.drop-text { color: var(--muted); font-size: 14px; }
+.drop-text strong { color: var(--accent); }
+
+#file-input { display: none; }
+
+/* PROGRESS */
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.3s;
+  border-radius: 2px;
+}
+
+/* FILE PREVIEW */
+.file-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.file-thumb {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+.file-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.file-thumb .remove-btn {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  background: rgba(0,0,0,0.7);
+  border-radius: 50%;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* UPLOAD STATUS */
+.upload-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: var(--bg);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.upload-status { margin-right: auto; }
+.status-done { color: var(--success); }
+.status-error { color: var(--accent); }
+.status-pending { color: var(--muted); }
+
+/* API DOCS */
+.api-endpoint {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+}
+
+.method-get { color: #4ecdc4; }
+.method-post { color: var(--gold); }
+.method-delete { color: var(--accent); }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-size: 14px;
+  z-index: 9999;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s;
+  max-width: 300px;
+}
+
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-color: var(--success); color: var(--success); }
+.toast.error { border-color: var(--accent); color: var(--accent); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  width: 500px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 24px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* RTL/LTR */
+[dir="ltr"] { font-family: 'Cairo', sans-serif; }
+
+.hidden { display: none !important; }
+
+@media (max-width: 768px) {
+  .sidebar { width: 100%; height: auto; position: relative; }
+  .main { margin-right: 0; padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">MangaPlus</div>
+    <div class="login-sub">لوحة الإدارة | Admin Panel</div>
+    <input type="password" id="admin-key-input" placeholder="Admin Key" autocomplete="off"/>
+    <button class="btn btn-primary" onclick="doLogin()">
+      <span>🔐</span> <span data-ar="دخول" data-en="Login">دخول</span>
+    </button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h1>MangaPlus</h1>
+      <span>Admin v1.0</span>
+    </div>
+
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('ar')">عربي</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+
+    <nav>
+      <div class="nav-item active" onclick="showPage('dashboard')">
+        <span class="nav-icon">📊</span>
+        <span data-ar="الرئيسية" data-en="Dashboard">الرئيسية</span>
+      </div>
+      <div class="nav-item" onclick="showPage('manga')">
+        <span class="nav-icon">📚</span>
+        <span data-ar="المانهوا" data-en="Manga">المانهوا</span>
+      </div>
+      <div class="nav-item" onclick="showPage('upload')">
+        <span class="nav-icon">⬆️</span>
+        <span data-ar="رفع فصل" data-en="Upload Chapter">رفع فصل</span>
+      </div>
+      <div class="nav-item" onclick="showPage('api')">
+        <span class="nav-icon">🔗</span>
+        <span data-ar="API" data-en="API Docs">API</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      MangaPlus<br/>
+      by abdou oran<br/>
+      hsai bounif<br/>
+      v1.0.0
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title" data-ar="لوحة <span>التحكم</span>" data-en="<span>Dashboard</span>">لوحة <span>التحكم</span></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-manga">0</div>
+          <div class="stat-label" data-ar="مانهوا" data-en="Manga">مانهوا</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-chapters">0</div>
+          <div class="stat-label" data-ar="فصول" data-en="Chapters">فصول</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-images">0</div>
+          <div class="stat-label" data-ar="صور" data-en="Images">صور</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚡ <span data-ar="حالة النظام" data-en="System Status">حالة النظام</span></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <div style="font-size:13px;color:var(--success);">✅ Cloudflare D1</div>
+          <div style="font-size:13px;color:var(--success);">✅ KV Cache</div>
+          <div style="font-size:13px;color:var(--success);">✅ Telegram API</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANGA PAGE -->
+    <div class="page" id="page-manga">
+      <div class="page-header">
+        <div class="page-title" data-ar="قائمة <span>المانهوا</span>" data-en="<span>Manga</span> List">قائمة <span>المانهوا</span></div>
+        <button class="btn btn-primary btn-sm" onclick="openAddManga()">
+          + <span data-ar="إضافة" data-en="Add New">إضافة</span>
+        </button>
+      </div>
+
+      <div class="manga-grid" id="manga-grid">
+        <div style="color:var(--muted);font-size:14px;" data-ar="جاري التحميل..." data-en="Loading...">جاري التحميل...</div>
+      </div>
+    </div>
+
+    <!-- UPLOAD PAGE -->
+    <div class="page" id="page-upload">
+      <div class="page-header">
+        <div class="page-title" data-ar="رفع <span>فصل</span>" data-en="Upload <span>Chapter</span>">رفع <span>فصل</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📋 <span data-ar="معلومات الفصل" data-en="Chapter Info">معلومات الفصل</span></div>
+        <div class="form-group">
+          <label class="form-label" data-ar="اختر المانهوا" data-en="Select Manga">اختر المانهوا</label>
+          <select class="form-input form-select" id="upload-manga-id">
+            <option value="">-- اختر --</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label class="form-label" data-ar="رقم الفصل" data-en="Chapter Number">رقم الفصل</label>
+            <input class="form-input" type="number" id="upload-chapter-num" placeholder="1" min="0" step="0.5"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-ar="اسم الفصل (اختياري)" data-en="Chapter Title (optional)">اسم الفصل</label>
+            <input class="form-input" type="text" id="upload-chapter-title" placeholder="..."/>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🖼️ <span data-ar="الصور" data-en="Images">الصور</span></div>
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <div class="drop-icon">📁</div>
+          <div class="drop-text">
+            <strong data-ar="اضغط أو اسحب" data-en="Click or drag">اضغط أو اسحب</strong><br/>
+            <span data-ar="صور الفصل هنا (JPG, PNG, WEBP)" data-en="chapter images here (JPG, PNG, WEBP)">صور الفصل هنا</span>
+          </div>
+        </div>
+        <input type="file" id="file-input" multiple accept="image/*"/>
+        <div class="file-preview-grid" id="file-preview"></div>
+      </div>
+
+      <div id="upload-progress" class="hidden card">
+        <div class="card-title">⬆️ <span data-ar="جاري الرفع" data-en="Uploading">جاري الرفع</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+        <div id="upload-log" style="margin-top:12px;max-height:200px;overflow-y:auto;"></div>
+      </div>
+
+      <button class="btn btn-primary" id="upload-btn" onclick="startUpload()" style="width:100%;margin-top:8px;">
+        🚀 <span data-ar="رفع الفصل" data-en="Upload Chapter">رفع الفصل</span>
+      </button>
+    </div>
+
+    <!-- API DOCS -->
+    <div class="page" id="page-api">
+      <div class="page-header">
+        <div class="page-title">API <span>Docs</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔑 <span data-ar="المصادقة" data-en="Authentication">المصادقة</span></div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;" data-ar="أضف هذا الهيدر للعمليات الإدارية:" data-en="Add this header for admin operations:">أضف هذا الهيدر للعمليات الإدارية:</p>
+        <code style="font-family:'Space Mono',monospace;font-size:12px;background:var(--bg);padding:8px 12px;border-radius:6px;display:block;">X-Admin-Key: YOUR_ADMIN_KEY</code>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📚 <span data-ar="نقاط النهاية" data-en="Endpoints">نقاط النهاية</span></div>
+
+        <div class="api-endpoint">
+          <span class="method-get">GET</span> /api/manga
+          <p style="color:var(--muted);font-size:12px;margin-top:4px;" data-ar="قائمة كل المانهوا" data-en="List all manga">قائمة كل المانهوا</p>
+        </div>
+
+        <div class="api-endpoint">
+          <span class="method-get">GET</span> /api/manga?id={id}
+          <p style="color:var(--muted);font-size:12px;margin-top:4px;" data-ar="مانهوا واحدة مع فصولها" data-en="Single manga with chapters">مانهوا واحدة مع فصولها</p>
+        </div>
+
+        <div class="api-endpoint">
+          <span class="method-post">POST</span> /api/manga
+          <p style="color:var(--muted);font-size:12px;margin-top:4px;" data-ar="إضافة مانهوا جديدة (admin)" data-en="Add new manga (admin)">إضافة مانهوا جديدة</p>
+        </div>
+
+        <div class="api-endpoint">
+          <span class="method-delete">DELETE</span> /api/manga?id={id}
+          <p style="color:var(--muted);font-size:12px;margin-top:4px;" data-ar="حذف مانهوا (admin)" data-en="Delete manga (admin)">حذف مانهوا</p>
+        </div>
+
+        <div class="api-endpoint">
+          <span class="method-get">GET</span> /api/chapters?manga_id={id}
+          <p style="color:var(--muted);font-size:12px;margin-top:4px;" data-ar="قائمة فصول مانهوا" data-en="List manga chapters">قائمة فصول مانهوا</p>
+        </div>
+
+        <div class="api-endpoint">
+          <span class="method-get">GET</span> /api/chapters?manga_id={id}&chapter={num}
+          <p style="color:var(--muted);font-size:12px;margin-top:4px;" data-ar="فصل واحد مع صوره (روابط مباشرة)" data-en="Single chapter with images (direct URLs)">فصل واحد مع صوره</p>
+        </div>
+
+        <div class="api-endpoint">
+          <span class="method-post">POST</span> /api/upload
+          <p style="color:var(--muted);font-size:12px;margin-top:4px;" data-ar="رفع صور إلى Telegram (admin)" data-en="Upload images to Telegram (admin)">رفع صور إلى Telegram</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💡 <span data-ar="مثال الرد" data-en="Response Example">مثال الرد</span></div>
+        <pre style="font-family:'Space Mono',monospace;font-size:12px;background:var(--bg);padding:16px;border-radius:8px;overflow-x:auto;color:var(--text);direction:ltr;">{
+  "id": "abc123",
+  "number": 1,
+  "title": "الفصل الأول",
+  "images": [
+    {
+      "id": "img1",
+      "url": "https://yoursite.pages.dev/file/ABC",
+      "order_num": 1
+    }
+  ]
+}</pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD MANGA MODAL -->
+<div class="modal-overlay" id="modal-add-manga">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-add-manga')">✕</button>
+    <div class="modal-title" data-ar="إضافة مانهوا" data-en="Add Manga">إضافة مانهوا</div>
+
+    <div class="form-group">
+      <label class="form-label" data-ar="الاسم بالإنجليزية" data-en="Title (English)">الاسم بالإنجليزية</label>
+      <input class="form-input" id="m-title" placeholder="Solo Leveling"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-ar="الاسم بالعربية" data-en="Title (Arabic)">الاسم بالعربية</label>
+      <input class="form-input" id="m-title-ar" placeholder="صعود المستوى المنفرد"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-ar="وصف" data-en="Description">وصف</label>
+      <textarea class="form-input" id="m-desc" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-ar="رابط الغلاف" data-en="Cover URL">رابط الغلاف</label>
+      <input class="form-input" id="m-cover" placeholder="https://..."/>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-ar="الحالة" data-en="Status">الحالة</label>
+      <select class="form-input form-select" id="m-status">
+        <option value="ongoing" data-ar="مستمر" data-en="Ongoing">مستمر</option>
+        <option value="completed" data-ar="مكتمل" data-en="Completed">مكتمل</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary" onclick="addManga()" style="width:100%">
+      ✅ <span data-ar="حفظ" data-en="Save">حفظ</span>
+    </button>
+  </div>
+</div>
+
+<!-- MANGA DETAIL MODAL -->
+<div class="modal-overlay" id="modal-manga-detail">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-manga-detail')">✕</button>
+    <div class="modal-title" id="detail-title">—</div>
+    <div id="detail-chapters" class="chapter-list"></div>
+    <div style="margin-top:16px;display:flex;gap:8px;">
+      <button class="btn btn-danger btn-sm" onclick="deleteMangaModal()">🗑️ <span data-ar="حذف" data-en="Delete">حذف</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE = window.location.origin;
+let ADMIN_KEY = '';
+let currentLang = 'ar';
+let selectedFiles = [];
+let currentMangaId = null;
+
+// ─── AUTH ───
+function doLogin() {
+  const key = document.getElementById('admin-key-input').value.trim();
+  if (!key) return showToast('أدخل الـ Admin Key', 'error');
+  ADMIN_KEY = key;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadDashboard();
+  loadMangaList();
+  loadMangaSelect();
+}
+
+// ─── LANGUAGE ───
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('[data-ar]').forEach(el => {
+    const text = el.getAttribute(`data-${lang}`);
+    if (text) el.innerHTML = text;
+  });
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+}
+
+// ─── NAVIGATION ───
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`page-${name}`).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ─── API HELPER ───
+async function api(path, opts = {}) {
+  const headers = { 'X-Admin-Key': ADMIN_KEY, ...opts.headers };
+  if (opts.body && !(opts.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(opts.body);
+  }
+  const res = await fetch(`${BASE}${path}`, { ...opts, headers });
+  return res.json();
+}
+
+// ─── DASHBOARD ───
+async function loadDashboard() {
+  const manga = await api('/api/manga');
+  document.getElementById('stat-manga').textContent = manga.length || 0;
+
+  let chapters = 0, images = 0;
+  for (const m of (manga || [])) {
+    const detail = await api(`/api/manga?id=${m.id}`);
+    chapters += detail.chapters?.length || 0;
+  }
+  document.getElementById('stat-chapters').textContent = chapters;
+  document.getElementById('stat-images').textContent = '—';
+}
+
+// ─── MANGA LIST ───
+async function loadMangaList() {
+  const grid = document.getElementById('manga-grid');
+  grid.innerHTML = '<div style="color:var(--muted)">جاري التحميل...</div>';
+  const list = await api('/api/manga');
+  if (!list?.length) {
+    grid.innerHTML = '<div style="color:var(--muted);font-size:14px;">لا توجد مانهوا بعد</div>';
+    return;
+  }
+  grid.innerHTML = list.map(m => `
+    <div class="manga-card" onclick="openMangaDetail('${m.id}','${m.title}')">
+      <div class="manga-cover">${m.cover ? `<img src="${m.cover}" alt="${m.title}" style="width:100%;height:100%;object-fit:cover"/>` : '📖'}</div>
+      <div class="manga-info">
+        <h3>${m.title_ar || m.title}</h3>
+        <p>${m.title}</p>
+        <span class="badge badge-${m.status}">${m.status === 'ongoing' ? 'مستمر' : 'مكتمل'}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function loadMangaSelect() {
+  const list = await api('/api/manga');
+  const sel = document.getElementById('upload-manga-id');
+  sel.innerHTML = '<option value="">-- اختر مانهوا --</option>' +
+    (list || []).map(m => `<option value="${m.id}">${m.title_ar || m.title}</option>`).join('');
+}
+
+// ─── ADD MANGA ───
+function openAddManga() {
+  document.getElementById('modal-add-manga').classList.add('open');
+}
+
+async function addManga() {
+  const title = document.getElementById('m-title').value.trim();
+  if (!title) return showToast('الاسم مطلوب', 'error');
+
+  const res = await api('/api/manga', {
+    method: 'POST',
+    body: {
+      title,
+      title_ar: document.getElementById('m-title-ar').value,
+      description: document.getElementById('m-desc').value,
+      cover: document.getElementById('m-cover').value,
+      status: document.getElementById('m-status').value,
+    }
+  });
+
+  if (res.success) {
+    showToast('تمت الإضافة ✅', 'success');
+    closeModal('modal-add-manga');
+    loadMangaList();
+    loadMangaSelect();
+  } else {
+    showToast(res.error || 'خطأ', 'error');
+  }
+}
+
+// ─── MANGA DETAIL ───
+async function openMangaDetail(id, title) {
+  currentMangaId = id;
+  document.getElementById('detail-title').textContent = title;
+  document.getElementById('modal-manga-detail').classList.add('open');
+
+  const detail = await api(`/api/manga?id=${id}`);
+  const container = document.getElementById('detail-chapters');
+
+  if (!detail.chapters?.length) {
+    container.innerHTML = '<div style="color:var(--muted);font-size:13px;">لا توجد فصول</div>';
+    return;
+  }
+
+  container.innerHTML = detail.chapters.map(c => `
+    <div class="chapter-item">
+      <span style="font-weight:700">فصل ${c.number}</span>
+      <span style="color:var(--muted);font-size:13px;">${c.title || ''}</span>
+      <button class="btn btn-danger btn-sm" onclick="deleteChapter('${c.id}','${id}','${c.number}')">🗑️</button>
+    </div>
+  `).join('');
+}
+
+async function deleteMangaModal() {
+  if (!currentMangaId) return;
+  if (!confirm('حذف هذه المانهوا وكل فصولها؟')) return;
+  const res = await api(`/api/manga?id=${currentMangaId}`, { method: 'DELETE' });
+  if (res.success) {
+    showToast('تم الحذف', 'success');
+    closeModal('modal-manga-detail');
+    loadMangaList();
+  }
+}
+
+async function deleteChapter(id, mangaId, num) {
+  if (!confirm(`حذف الفصل ${num}؟`)) return;
+  const res = await api(`/api/chapters?id=${id}`, { method: 'DELETE' });
+  if (res.success) {
+    showToast('تم الحذف', 'success');
+    openMangaDetail(mangaId, document.getElementById('detail-title').textContent);
+  }
+}
+
+// ─── UPLOAD ───
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  addFiles([...e.dataTransfer.files]);
+});
+
+fileInput.addEventListener('change', () => addFiles([...fileInput.files]));
+
+function addFiles(files) {
+  const imgs = files.filter(f => f.type.startsWith('image/'));
+  selectedFiles = [...selectedFiles, ...imgs];
+  selectedFiles.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  renderPreviews();
+}
+
+function renderPreviews() {
+  const grid = document.getElementById('file-preview');
+  grid.innerHTML = selectedFiles.map((f, i) => `
+    <div class="file-thumb">
+      <img src="${URL.createObjectURL(f)}" alt="${f.name}"/>
+      <button class="remove-btn" onclick="removeFile(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeFile(i) {
+  selectedFiles.splice(i, 1);
+  renderPreviews();
+}
+
+async function startUpload() {
+  const mangaId = document.getElementById('upload-manga-id').value;
+  const chapterNum = document.getElementById('upload-chapter-num').value;
+  const chapterTitle = document.getElementById('upload-chapter-title').value;
+
+  if (!mangaId) return showToast('اختر مانهوا', 'error');
+  if (!chapterNum) return showToast('أدخل رقم الفصل', 'error');
+  if (!selectedFiles.length) return showToast('اختر صور الفصل', 'error');
+
+  document.getElementById('upload-progress').classList.remove('hidden');
+  document.getElementById('upload-btn').disabled = true;
+
+  const log = document.getElementById('upload-log');
+  log.innerHTML = '';
+  const uploaded = [];
+
+  for (let i = 0; i < selectedFiles.length; i++) {
+    const file = selectedFiles[i];
+    const pct = Math.round(((i) / selectedFiles.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+
+    log.innerHTML += `<div class="upload-item"><span>🖼️ ${file.name}</span><span class="status-pending">جاري...</span></div>`;
+    log.scrollTop = log.scrollHeight;
+
+    const form = new FormData();
+    form.append('files', file);
+
+    try {
+      const res = await fetch(`${BASE}/api/upload`, {
+        method: 'POST',
+        headers: { 'X-Admin-Key': ADMIN_KEY },
+        body: form
+      });
+      const data = await res.json();
+
+      const items = log.querySelectorAll('.upload-item');
+      const last = items[items.length - 1];
+
+      if (data.success && data.uploaded?.length) {
+        uploaded.push({ file_id: data.uploaded[0].file_id, url: data.uploaded[0].url });
+        last.querySelector('.status-pending').className = 'status-done';
+        last.querySelector('.status-done').textContent = '✅';
+      } else {
+        last.querySelector('.status-pending').className = 'status-error';
+        last.querySelector('.status-error').textContent = '❌';
+      }
+    } catch {
+      const items = log.querySelectorAll('.upload-item');
+      const last = items[items.length - 1];
+      last.querySelector('.status-pending').className = 'status-error';
+      last.querySelector('.status-error').textContent = '❌';
+    }
+  }
+
+  document.getElementById('progress-fill').style.width = '100%';
+
+  // Save chapter to D1
+  if (uploaded.length) {
+    const res = await api('/api/chapters', {
+      method: 'POST',
+      body: {
+        manga_id: mangaId,
+        number: parseFloat(chapterNum),
+        title: chapterTitle || null,
+        images: uploaded
+      }
+    });
+
+    if (res.success) {
+      showToast(`✅ تم رفع ${uploaded.length} صورة وحفظ الفصل!`, 'success');
+      selectedFiles = [];
+      renderPreviews();
+      document.getElementById('upload-chapter-num').value = '';
+      document.getElementById('upload-chapter-title').value = '';
+    } else {
+      showToast(res.error || 'خطأ في حفظ الفصل', 'error');
+    }
+  }
+
+  document.getElementById('upload-btn').disabled = false;
+}
+
+// ─── MODAL ───
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ─── TOAST ───
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

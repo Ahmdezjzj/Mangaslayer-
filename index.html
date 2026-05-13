@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MangaPlus API</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Space+Mono&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Cairo', sans-serif;
+  background: #0a0a0f;
+  color: #e8e8f0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.container {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+.logo {
+  font-size: 48px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #e63946, #ff6b35);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+  letter-spacing: -2px;
+}
+
+.tagline {
+  color: #6b6b80;
+  font-size: 14px;
+  margin-bottom: 48px;
+  font-family: 'Space Mono', monospace;
+}
+
+.links {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.link-primary {
+  background: linear-gradient(135deg, #e63946, #ff6b35);
+  color: white;
+}
+
+.link-secondary {
+  background: #12121a;
+  border: 1px solid #1e1e2e;
+  color: #e8e8f0;
+}
+
+.link-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+
+.endpoints {
+  background: #12121a;
+  border: 1px solid #1e1e2e;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: right;
+}
+
+.endpoint {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #1e1e2e;
+  font-size: 13px;
+}
+
+.endpoint:last-child { border-bottom: none; }
+
+.method {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.get { background: rgba(78,205,196,0.15); color: #4ecdc4; }
+.post { background: rgba(255,214,10,0.15); color: #ffd60a; }
+.delete { background: rgba(230,57,70,0.15); color: #e63946; }
+
+.path {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #e8e8f0;
+  flex: 1;
+  direction: ltr;
+  text-align: left;
+}
+
+.desc { color: #6b6b80; font-size: 12px; margin-top: 2px; }
+
+.footer {
+  margin-top: 48px;
+  color: #3a3a50;
+  font-size: 12px;
+  font-family: 'Space Mono', monospace;
+  line-height: 2;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">MangaPlus</div>
+  <div class="tagline">Manga Hosting API — Cloudflare + Telegram + D1</div>
+
+  <div class="links">
+    <a href="/admin.html" class="link-btn link-primary">🔐 لوحة الإدارة</a>
+    <a href="/api/manga" class="link-btn link-secondary">📡 API</a>
+  </div>
+
+  <div class="endpoints">
+    <div style="font-weight:700;margin-bottom:16px;font-size:15px;">📚 API Endpoints</div>
+
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div>
+        <div class="path">/api/manga</div>
+        <div class="desc">قائمة كل المانهوا</div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div>
+        <div class="path">/api/manga?id={id}</div>
+        <div class="desc">مانهوا واحدة مع فصولها</div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <span class="method post">POST</span>
+      <div>
+        <div class="path">/api/manga</div>
+        <div class="desc">إضافة مانهوا — يحتاج X-Admin-Key</div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <span class="method delete">DELETE</span>
+      <div>
+        <div class="path">/api/manga?id={id}</div>
+        <div class="desc">حذف مانهوا — يحتاج X-Admin-Key</div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div>
+        <div class="path">/api/chapters?manga_id={id}</div>
+        <div class="desc">قائمة فصول مانهوا</div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div>
+        <div class="path">/api/chapters?manga_id={id}&chapter={n}</div>
+        <div class="desc">فصل كامل مع روابط الصور المباشرة</div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <span class="method post">POST</span>
+      <div>
+        <div class="path">/api/upload</div>
+        <div class="desc">رفع صور إلى Telegram — يحتاج X-Admin-Key</div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <div>
+        <div class="path">/file/{id}</div>
+        <div class="desc">رابط مباشر للصورة من Telegram CDN</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    MangaPlus v1.0.0<br/>
+    by abdou oran hsai bounif<br/>
+    Cloudflare Pages + D1 + KV + Telegram
+  </div>
+</div>
+</body>
+</html>
