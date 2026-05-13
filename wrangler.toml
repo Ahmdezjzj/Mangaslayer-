@@ -4,9 +4,9 @@ pages_build_output_dir = "."
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "KV_ID_هنا"
+id = "44c13b24ac0b4302b395985ca16e2aa1"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "mangaplus"
-database_id = "D1_ID_هنا"
+database_id = "0ea320b1-b22f-4ed3-9533-0d8431e53395"
